@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>弹出窗</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    var map;
+    //Marker数组
+    var markers = [];
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 40.7413549, lng: -73.9980244},
+            zoom: 17
+        });
+
+        //data
+        var locations = [
+            {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+            {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+            {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}
+        ];
+
+        var largeInfoWindow = new google.maps.InfoWindow();
+        var bounds = new google.maps.LatLngBounds(); // 边界, 捕获视口的西南角和东北角
+
+        //创建一系列Marker
+        for(var i=0; i<locations.length; i++){
+            var marker = new google.maps.Marker({
+                map: map,
+                position: locations[i].location,
+                title: locations[i].title,
+                animation: google.maps.Animation.DROP,
+                id: i
+            });
+            markers.push(marker);
+
+            //拓展到所有标记
+            bounds.extend(marker.position);
+
+            marker.addListener('click', function(){
+                populateInfoWindow(this, largeInfoWindow);
+            })
+        }
+        //让地图适应新的边界
+        map.fitBounds(bounds);
+
+        function populateInfoWindow(marker, infoWindow){
+            if(infoWindow.marker != marker){
+                infoWindow.marker = marker;
+                infoWindow.setContent('<div>'+marker.title+'</div>');
+                infoWindow.open(map, marker);
+
+                //清除
+                infoWindow.addListener('closeclick', function(){
+                    infoWindow.setMarker(null);
+                })
+            }
+
+        }
+
+    }
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcxEccOukdP3X835kELQMMxjz3uvoCDSY&v=3&callback=initMap"></script>
+</body>
+</html>

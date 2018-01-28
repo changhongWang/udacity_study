@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>标记</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 22.671894, lng: 114.046322},
+            zoom: 12
+        })
+
+        var shenzhenNorth = {lat: 22.6092470000, lng: 114.0287800000};//深圳北站经纬度
+        //使用google.maps.Marker对象创建一个新的marker实例
+        //传入参数：position & map， title是hover时显示文字
+        //可以使其可拖动，还可以指定动画(e.g 落在地图上)
+        var marker = new google.maps.Marker({
+            position: shenzhenNorth,
+            map: map,
+            title: '深圳北站(Shenzhen North Railway Station)'
+        });
+
+        //标记2
+        var marker2 = new google.maps.Marker({
+            position: {lat: 22.6639790000, lng: 114.0365420000},
+            title: '清湖地铁站',
+            draggable: true
+        });
+
+        //添加动画
+        marker.setAnimation(google.maps.Animation.DROP);
+        marker2.setAnimation(google.maps.Animation.DROP);
+
+        //添加标记
+        marker2.setMap(map);
+
+        //移除标记
+        // marker2.setMap(null);
+
+        marker2.addListener('click', toggleBounce);
+        //标记的动画
+        //使用标记的animation属性，支持DROP和BOUNCE
+        function toggleBounce(){
+            // if(marker2.getAnimation() != null){
+            //     marker2.setAnimation(null);
+            // }else{
+            //     marker2.setAnimation(google.maps.Animation.BOUNCE);
+            // }
+            marker2.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function(){
+                marker2.setAnimation(null);
+            }, 1400);
+        }
+
+    }
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcxEccOukdP3X835kELQMMxjz3uvoCDSY&v=3&callback=initMap"></script>
+</body>
+</html>

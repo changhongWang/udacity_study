@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高级弹出窗-加点击</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 80%;
+        }
+        .map-control-wrapper{
+            margin: 10px 30px;
+            border: 2px solid #aaa;
+            border-radius: 5px
+        }
+        .map-control-title{
+            padding: 0 10px;
+        }
+        .map-control-content{
+            padding: 0 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div class="map-control-wrapper">
+    <p class="map-control-title">地图控制</p>
+    <div class="map-control-content">
+        <button id="showMarker">展示Marker</button>
+        <button id="hideMarker">隐藏Marker</button>
+    </div>
+</div>
+
+
+<script>
+    var map;
+    //Marker数组
+    var markers = [];
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 40.7413549, lng: -73.9980244},
+            zoom: 12,
+            mapTypeControl: false
+        });
+
+        //data
+        var locations = [
+            {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+            {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+            {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}
+        ];
+
+        var largeInfoWindow = new google.maps.InfoWindow();
+
+        //创建一系列Marker
+        for(var i=0; i<locations.length; i++){
+            var marker = new google.maps.Marker({
+                position: locations[i].location,
+                title: locations[i].title,
+                animation: google.maps.Animation.DROP,
+                id: i
+            });
+            markers.push(marker);
+
+            marker.addListener('click', function(){
+                populateInfoWindow(this, largeInfoWindow);
+            });
+        }
+
+        //点击事件
+        var showMarkerBtn = document.getElementById('showMarker');
+        var hideMarkerBtn = document.getElementById('hideMarker');
+
+        showMarkerBtn.addEventListener('click', showMarker);
+        hideMarkerBtn.addEventListener('click', hideMarker);
+    }
+
+    function showMarker(){
+        var bounds = new google.maps.LatLngBounds();
+
+        for(var i=0; i<markers.length; i++){
+            markers[i].setMap(map);
+            bounds.extend(markers[i].position);
+        }
+        map.fitBounds(bounds);
+    }
+
+    function hideMarker(){
+        for(var i=0; i<markers.length; i++){
+            markers[i].setMap(null);
+        }
+    }
+
+    function populateInfoWindow(marker, infoWindow){
+        if(infoWindow.marker != marker){
+            infoWindow.marker = marker;
+            infoWindow.setContent('<div>'+marker.title+'</div>');
+            infoWindow.open(map, marker);
+
+            //清除
+            infoWindow.addListener('closeclick', function(){
+                infoWindow.setMarker(null);
+            })
+        }
+
+    }
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcxEccOukdP3X835kELQMMxjz3uvoCDSY&v=3&callback=initMap"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>弹出窗</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 22.671894, lng: 114.046322},
+            zoom: 12
+        })
+
+        var shenzhenNorth = {lat: 22.6092470000, lng: 114.0287800000};//深圳北站经纬度
+        //使用google.maps.Marker对象创建一个新的marker实例
+        //传入参数：position & map， title是hover时显示文字
+        //可以使其可拖动，还可以指定动画(e.g 落在地图上)
+        var marker = new google.maps.Marker({
+            position: shenzhenNorth,
+            map: map,
+            title: '深圳北站(Shenzhen North Railway Station)'
+        });
+
+        //弹出窗
+        var infoWindow = new google.maps.InfoWindow({
+            content: 'The First InfoWindow Here! 第一个弹窗'
+        });
+
+        marker.addListener('click', function(){
+            //传入地图和标记
+            infoWindow.open(map, marker);
+        });
+        //添加载入时动画(drop)
+        marker.setAnimation(google.maps.Animation.DROP);
+
+    }
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcxEccOukdP3X835kELQMMxjz3uvoCDSY&v=3&callback=initMap"></script>
+</body>
+</html>
